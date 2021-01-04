@@ -38,7 +38,7 @@ model.add(layers.Dense(128, activation='relu',input_dim=1))
 model.add(layers.LayerNormalization(axis=1))
 model.add(layers.Dense(256, activation='relu'))
 model.add(layers.Dense(1, activation='linear'))
-adam = keras.optimizers.Adam(lr=0.0001, decay=1e-6)
+adam = keras.optimizers.Adam(lr=0.0005, decay=1e-6)
 model.compile(loss='mean_squared_error', optimizer=adam)
 model.fit(X_train,y_train,epochs=1200, batch_size = 32,verbose = 1,callbacks=[callback],validation_data=[X_test,y_test],validation_split=0.2)
 

@@ -11,22 +11,29 @@ app = flask.Flask(__name__)
 model = keras.models.load_model("./myModel.h5")
 
 
-@app.route('/',methods=["GET","POST"])
+@app.route('/')
+def home():
+    return app.send_static_file('index.html')
+
+    
+@app.route('/predict',methods=["POST"])
 def predict():
     data = {"success":False}
     print(model)
     # get the request parameters
-    params = flask.request.json
+    params = flask.request.form
     if (params == None):
-        params = flask.request.args    # if parameters are found, echo the msg parameter 
+        params = flask.request.form    # if parameters are found, echo the msg parameter 
     if (params != None):
-        this_is_an_array = np.array([params['value']])
+        parsedValue = float(params['value'])
+        this_is_an_array = np.array([parsedValue])
         x = model.predict(this_is_an_array)
         list = x.tolist()
         json_str = json.dumps(list)
         data["response"] = json_str
         data["success"] = True    # return a response in json format 
     return flask.jsonify(data)
+
 
 
 # start the flask app, allow remote connections

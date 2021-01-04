@@ -12,42 +12,35 @@ import tensorflow as tf
 from tensorflow import  keras
 from tensorflow.keras import layers
 
-import random
+#sklearn train-test-split
+from sklearn.model_selection import train_test_split
 
-percent = 0.45
-powerproduction = pd.read_csv("powerproduction.csv", header = 0 , skiprows = lambda i: i>0 and random.random() > percent)
-powerproduction = powerproduction[~np.all(powerproduction[["power"]] == 0, axis=1)]
-print(powerproduction)
+
+powerproduction = pd.read_csv("powerproduction.csv", header = 0)
+#powerproduction = powerproduction[~np.all(powerproduction[["power"]] == 0, axis=1)]
+
+X_train, X_test, y_train, y_test = train_test_split(powerproduction[['speed']], powerproduction[['power']], test_size=0.2, random_state=42)
+X_train = np.array(X_train)
+y_train = np.array(y_train)
+
+print(X_train.shape)
+print(y_train.shape)
 
 # Plot style.
 plt.style.use("ggplot")
 
 # Plot size.
 plt.rcParams['figure.figsize'] = [14, 8]
-
-
-# Train a different model.
-#model = keras.models.Sequential()
-#model.add(layers.BatchNormalization(axis=1))
-#model.add(layers.Dense(50,input_shape=(1,), activation='sigmoid'))
-#model.add(layers.Dense(50, activation='sigmoid'))
-#model.add(layers.Dense(1, activation='linear'))
-#model.compile(keras.optimizers.Adam(lr=0.01 ,decay=1e-6),loss="mean_squared_error",metrics=["mean_absolute_error"])
-
-
-# Fit the data.
-#model.fit(powerproduction['speed'], powerproduction['power'], epochs=1000)
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=16)
 
 model = keras.models.Sequential()
-model.add(layers.Dense(100, activation='relu', 
-                input_dim=1))
-model.add(layers.Dense(80, activation='relu'))
+model.add(layers.Dense(128, activation='relu',input_dim=1))
+model.add(layers.LayerNormalization(axis=1))
+model.add(layers.Dense(256, activation='relu'))
 model.add(layers.Dense(1, activation='linear'))
-adam = keras.optimizers.Adam(lr=0.01, decay=1e-6)
-model.compile(loss='mean_squared_error', 
-              optimizer=adam,
-              metrics=['accuracy'])
-model.fit(powerproduction['speed'],powerproduction['power'],epochs=1000, batch_size = 32,verbose = 0)
+adam = keras.optimizers.Adam(lr=0.0001, decay=1e-6)
+model.compile(loss='mean_squared_error', optimizer=adam)
+model.fit(X_train,y_train,epochs=1200, batch_size = 32,verbose = 1,callbacks=[callback],validation_data=[X_test,y_test],validation_split=0.2)
 
 
 # Plot the predictions (on the training set itself).

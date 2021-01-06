@@ -35,6 +35,6 @@ def predict():
 
 
 # start the flask app, allow remote connections
-app.run(host='127.168.1.1')
+app.run(host='0.0.0.0')
 
     

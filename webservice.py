@@ -4,8 +4,6 @@ import numpy as np
 import json
 from flask import request
 
-
-
 app = flask.Flask(__name__)
 
 model = keras.models.load_model("./myModel.h5")

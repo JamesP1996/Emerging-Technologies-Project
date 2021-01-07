@@ -9,7 +9,7 @@ The requirements and tools used for this program to work are:
 
 1. Jupyter Notebook [https://jupyter.org/install.html]
 2. Anaconda / Python.
-3. All of the libaries installed through pip or conda from requirements.txt
+3. All of the libaries installed through pip or conda from **requirements.txt**
 4. Docker with WSL2
 
 
